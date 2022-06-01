@@ -5,9 +5,8 @@ namespace Common
     {
         public string FamilyName { get; set; }
         public string Id { get; set; }
-        public string BookId { get; set; }
 
-        public CreateNewMemberCommand(string familyName, string memberId, string bookId = null)
+        public CreateNewMemberCommand(string familyName, string memberId)
         {
             this.FamilyName = familyName;
             this.Id = memberId;

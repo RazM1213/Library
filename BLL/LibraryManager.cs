@@ -7,7 +7,7 @@ namespace BLL
 {
     public class LibraryManager
     {
-        private FileParser _fileParser;
+        private readonly FileParser _fileParser;
 
         public LibraryManager()
         {

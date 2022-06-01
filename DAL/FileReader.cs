@@ -1,14 +1,12 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Text;
 
 namespace DAL
 {
     public class FileReader : IReader
     {
         public string Path { get; set; }
-        private FileValidator _fileValidator;
+        private readonly FileValidator _fileValidator;
 
         public FileReader(string path)
         {

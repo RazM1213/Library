@@ -7,8 +7,7 @@ namespace DAL
 {
     public class FileParser
     {
-        private IReader _fileReader;
-        private CommandValidator _commandValidator;
+        private readonly IReader _fileReader;
         public List<ICommand> Commands { get; }
         public List<IQuery> Queries { get; }
 
@@ -19,66 +18,36 @@ namespace DAL
             this.Queries = new List<IQuery>();
         }
 
-        public Command BuildCommand(string line)
+        public void PlusIdentifier(string[] parameters)
         {
-            string[] commandStructure = line.Split(' ');
-
-            Command command;
-
-            if (commandStructure.Length == 4)
+            if (parameters.Length == 4)
             {
-                command = new Command(commandStructure[1], commandStructure[2], commandStructure[3]);
-            } else
-            {
-                command = new Command(commandStructure[1], commandStructure[2]);
+                this.Commands.Add(new LendBookCommand(parameters[0], parameters[1], parameters[2]));
             }
-
-            this._commandValidator = new CommandValidator(command);
-            if (this._commandValidator.Validate())
-            {
-                return command;
-
-            }
-
-            return null;
+            else
+                this.Commands.Add(new CreateNewMemberCommand(parameters[0], parameters[1]));
         }
 
-        public void PlusIdentifier(string trimmedLine)
+        public void MinusIdentifier(string[] parameters)
         {
-            Command command = this.BuildCommand(trimmedLine);
 
-            if (command.BookId != null)
+            if (parameters.Length == 4)
             {
-                this.Commands.Add(new LendBookCommand(command.FamilyName, command.Id, command.BookId));
+                this.Commands.Add(new ReturnBookCommand(parameters[1], parameters[2], parameters[3]));
             }
             else
             {
-                this.Commands.Add(new CreateNewMemberCommand(command.FamilyName, command.Id));
+                this.Commands.Add(new DeleteExistingMemberCommand(parameters[1], parameters[2]));
             }
         }
 
-        public void MinusIdentifier(string trimmedLine)
+        public void QuestionIdentifier(string[] parameters)
         {
-            Command command = this.BuildCommand(trimmedLine);
-
-            if (command.BookId != null)
-            {
-                this.Commands.Add(new ReturnBookCommand(command.FamilyName, command.Id, command.BookId));
-            }
-            else
-            {
-                this.Commands.Add(new DeleteExistingMemberCommand(command.FamilyName, command.Id));
-            }
-        }
-
-        public void QuestionIdentifier(string trimmedLine)
-        {
-            Query query = new Query(trimmedLine.Split(' ')[1]);
-            if (query.Act == "!")
+            if (parameters[1] == "!")
             {
                 this.Queries.Add(new GetTopMembersQuery());
             }
-            else if (!query.Act.All(char.IsNumber))
+            else if (!parameters[1].All(char.IsNumber))
             {
                 this.Queries.Add(new GetMemberByBookQuery());
             }
@@ -92,24 +61,47 @@ namespace DAL
         {
             foreach (string line in this._fileReader.GetLines())
             {
-                string trimmedLine = line.Trim();
+                string[] commandParams = line.Trim().Split(" ");
 
-                switch (trimmedLine[0])
+                bool validateResult = false;
+
+                try
                 {
-                    case '+':
-                        this.PlusIdentifier(trimmedLine);
-                        break;
+                    if (commandParams.Length == 2)
+                    {
+                        validateResult = Validator.ValidateQuery(commandParams);
+                    }
+                    else
+                    {
+                        validateResult = Validator.ValidateCommand(commandParams);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
 
-                    case '-':
-                        this.MinusIdentifier(trimmedLine);
-                        break;
 
-                    case '?':
-                        this.QuestionIdentifier(trimmedLine);
-                        break;
+                if (validateResult)
+                {
+                    switch (commandParams[0])
+                    {
+                        case "+":
+                            this.PlusIdentifier(commandParams);
+                            break;
 
-                    default:
-                        break;
+                        case "-":
+                            this.MinusIdentifier(commandParams);
+                            break;
+
+                        case "?":
+                            this.QuestionIdentifier(commandParams);
+                            break;
+
+                        default:
+                            Console.WriteLine("Invalid Command");
+                            break;
+                    }
                 }
             }
         }
