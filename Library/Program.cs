@@ -13,14 +13,14 @@ namespace UI
 
             foreach (ICommand command in manager.GetCommands())
             {
-                Console.WriteLine(command.GetType());
+                command.RunCommand();
             }
 
             Console.WriteLine("=====================================");
 
             foreach (IQuery query in manager.GetQueries())
             {
-                Console.WriteLine(query.GetType());
+                query.RunQuery();
             }
         }
     }

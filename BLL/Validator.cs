@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 
-namespace Common
+namespace BLL
 {
-    public static class Validator
+    public static class Validator // Split to a few classes - each tests one condition. Create validator interface
     {
         public static bool IsBookIdValid(string bookId)
         {

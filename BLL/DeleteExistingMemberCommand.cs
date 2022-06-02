@@ -1,5 +1,8 @@
-﻿
-namespace Common
+﻿using System;
+using Common;
+using DAL;
+
+namespace BLL
 {
     public class DeleteExistingMemberCommand : ICommand
     {
@@ -14,7 +17,11 @@ namespace Common
 
         public void RunCommand()
         {
-            throw new System.NotImplementedException();
+            SqlServerManager sqlServerManager =
+                new SqlServerManager(
+                    @"data source=LAPTOP-EHGIB3LB\SQLEXPRESS;initial catalog=Northwind;trusted_connection=true");
+
+            sqlServerManager.Transact(String.Format("DELETE FROM Members WHERE MemberID={0}", this.Id));
         }
     }
 }

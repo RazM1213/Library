@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Common;
+using DAL;
 
-namespace DAL
+namespace BLL
 {
     public class FileParser
     {
@@ -22,10 +23,10 @@ namespace DAL
         {
             if (parameters.Length == 4)
             {
-                this.Commands.Add(new LendBookCommand(parameters[0], parameters[1], parameters[2]));
+                this.Commands.Add(new LendBookCommand(parameters[1], parameters[2], parameters[3]));
             }
             else
-                this.Commands.Add(new CreateNewMemberCommand(parameters[0], parameters[1]));
+                this.Commands.Add(new CreateNewMemberCommand(parameters[1], parameters[2]));
         }
 
         public void MinusIdentifier(string[] parameters)
@@ -45,15 +46,15 @@ namespace DAL
         {
             if (parameters[1] == "!")
             {
-                this.Queries.Add(new GetTopMembersQuery());
+                this.Queries.Add(new GetTopMembersQuery(parameters[1]));
             }
             else if (!parameters[1].All(char.IsNumber))
             {
-                this.Queries.Add(new GetMemberByBookQuery());
+                this.Queries.Add(new GetMemberByBookQuery(parameters[1]));
             }
             else
             {
-                this.Queries.Add(new GetBooksByMemberQuery());
+                this.Queries.Add(new GetBooksByMemberQuery(parameters[1]));
             }
         }
 

@@ -1,4 +1,8 @@
-﻿namespace Common
+﻿using System;
+using Common;
+using DAL;
+
+namespace BLL
 {
     public class ReturnBookCommand : ICommand
     {
@@ -14,7 +18,11 @@
         }
         public void RunCommand()
         {
-            throw new System.NotImplementedException();
+            SqlServerManager sqlServerManager =
+                new SqlServerManager(
+                    @"data source=LAPTOP-EHGIB3LB\SQLEXPRESS;initial catalog=Northwind;trusted_connection=true");
+
+            sqlServerManager.Transact(String.Format("UPDATE Books SET MemberID=NULL WHERE BookID='{0}'", this.BookId));
         }
     }
 }

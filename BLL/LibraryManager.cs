@@ -1,6 +1,4 @@
-﻿using DAL;
-using Common;
-using System;
+﻿using Common;
 using System.Collections.Generic;
 
 namespace BLL
